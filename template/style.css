@@ -18,6 +18,9 @@
   margin-right: auto;
 }
 
+.login-back{
+  background-color: #31b0d5;
+}
 h1 {
     font-family: "Times New Roman", Times, serif;
     font-weight: bold;
@@ -33,6 +36,11 @@ fieldset {
   border: 0;
   margin: 0;
   padding: 0;
+}
+
+a {
+    color: #333;
+    text-decoration: none;
 }
 
 .form-control {
@@ -81,7 +89,8 @@ fieldset {
   overflow: hidden;
   width: 350px;
   margin-left: auto;
-  margin-right: auto
+  margin-right: auto;
+
 }
 
 .create-control {
@@ -99,6 +108,10 @@ fieldset {
   display: block;
   font-weight: bold;
   margin-bottom: 20px;
+}
+
+.text-opacity {
+  opacity: 0.5;
 }
 
 .create-info input {
@@ -139,7 +152,9 @@ fieldset {
     
     /* Set gray background color and 100% height */
     .sidenav {
-      background-color: #f8f8f8;
+     /* background-color: #f8f8f8;*/
+      background-color: #31b0d5;
+      border-color: #269abc;
       height: 100%;
       position: fixed;
       width: 25%;
