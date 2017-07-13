@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('Messages', {
+    queryInterface.createTable('messages', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -8,7 +8,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       themessage: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      Username: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       prioritylevel: {
         type: Sequelize.STRING
@@ -16,7 +21,14 @@ module.exports = {
       senderid: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Users',
+          model: 'users',
+          key: 'id'
+        },
+      },
+      groupid: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'groups',
           key: 'id'
         },
       },
@@ -30,5 +42,5 @@ module.exports = {
       }
     }),
   down: queryInterface /* , Sequelize */ =>
-    queryInterface.dropTable('Messages'),
+    queryInterface.dropTable('messages'),
 };

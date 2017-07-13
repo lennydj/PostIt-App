@@ -1,22 +1,21 @@
-const Groups = require('../models').Groups;
-//const Users = require('../models').Users;
-//const UserGroups = require('../models').UserGroups;
+import models from '../models';
 
-module.exports = {
-  create(req, res) {
-    return Groups
-      .create({
-        groupname: req.body.groupname,
-        createdby: req.body.createdby
-      });
-    // Users.findOne({ where: { createdby: req.body.createdby } })
-    // .then((usergroup) => {
-    /* return UserGroups
-      .create({
-          usergroupsid: req.body.createdby,
-          groupisd: Users.findOne({ where: { groupname: req.body.groupname } })
+const group = models.group;
+
+module.exports.create = (req, res) => {
+  // Check if the group exists already
+  group.findOne({ where: { groupname: req.body.groupname } })
+    .then((existinggroup) => {
+      if (existinggroup) {
+        res.send('Group already exists, please select another groupname');
+      } else {
+        // Create the group since it does not exist
+        group.create({
+          groupname: req.body.groupname,
+          createdby: req.body.createdby
         })
-      .then(groups => res.status(201).send(groups))
-      .catch(error => res.status(400).send(error));*/
-  },
+          .then(res.status(201).send('Group Created'))
+          .catch(err => res.status(400).send(err));
+      }
+    });
 };

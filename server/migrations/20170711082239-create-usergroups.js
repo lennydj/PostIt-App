@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('UserGroups', {
+    queryInterface.createTable('usergroups', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,7 +10,7 @@ module.exports = {
       userid: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Users',
+          model: 'users',
           key: 'id'
         },
         allowNull: false
@@ -18,7 +18,7 @@ module.exports = {
       groupid: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Groups',
+          model: 'groups',
           key: 'id'
         },
         allowNull: false
@@ -33,5 +33,5 @@ module.exports = {
       },
     }),
   down: queryInterface /* Sequelize */ =>
-    queryInterface.dropTable('UserGroups'),
+    queryInterface.dropTable('usergroup'),
 };

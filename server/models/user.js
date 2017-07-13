@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Users = sequelize.define('Users', {
+  const user = sequelize.define('user', {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     email: {
       type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
     },
     phonenumber: {
       type: DataTypes.INTEGER,
@@ -17,11 +19,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     associate: (models) => {
       // associations can be defined here
-      Users.belongsToMany(models.groups, {
-        through: 'UserGroups',
-        as: 'groupid',
+      user.belongsToMany(models.group, {
+        through: 'usergroup',
       });
     }
   });
-  return Users;
+  return user;
 };
