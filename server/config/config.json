@@ -5,5 +5,18 @@
     "database": "postit-app",
     "host": "127.0.0.1",
     "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "Obakam31@",
+    "database": "postit-app",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+
+  "production": {
+     "use_env_variable": "DB_URL",
+    "dialect": "postgres"
   }
+  
 }
