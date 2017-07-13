@@ -14,10 +14,10 @@ module.exports = (app) => {
 
   app.post('/api/users/signup', usersController.create);
   app.post('/api/users/signin', usersController.signin);
-  app.use(authorize.verifyUser);
+  // app.use(authorize.verifyUser);
 
-  app.post('/api/users/groups', groupsController.create);
-  app.post('/api/group/:groupid/message', messagesController.create);
-  app.get('/api/group/:groupid/messages', messagesController.findAll);
-  app.post('/api/group/:groupid/user', usergroupsController.createUser);
+  app.post('/api/users/groups', authorize.verifyUser, groupsController.create);
+  app.post('/api/group/:groupid/message', authorize.verifyUser, messagesController.create);
+  app.get('/api/group/:groupid/messages', authorize.verifyUser, messagesController.findAll);
+  app.post('/api/group/:groupid/user', authorize.verifyUser, usergroupsController.createUser);
 };
