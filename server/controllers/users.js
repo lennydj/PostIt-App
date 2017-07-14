@@ -36,7 +36,11 @@ module.exports.signin = (req, res) => {
     .then((user) => {
       if (user) {
         // Allow Login if the credentials are correct
-        res.send('Login Successful! You have 5 pending notifications');
+        // res.send('Login Successful! You have 5 pending notifications');
+        // .then((users) => {
+        const usertoken = jwt.sign({ users: users.id }, 'myownsecret',
+          { expiresIn: 24 * 60 * 60 });
+        res.send(200, { token: usertoken, users: users.id, username: users.username });
       } else {
         // Fail if the credentials are wrong
         res.send('Your password/password is incorrect, Please retry with the correct details');
