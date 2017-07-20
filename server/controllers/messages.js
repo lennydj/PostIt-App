@@ -1,6 +1,6 @@
 import models from '../models';
 
-//const message = models.message;
+// const message = models.message;
 const groupusers = models.usergroup;
 const messages = models.message;
 
@@ -29,12 +29,12 @@ module.exports.create = (req, res) => {
 
 // Get messages controller
 module.exports.findAll = (req, res) => {
-  messages.findAll({ where: { groupid: req.params.groupid } })
+  messages.findAll({ where: { groupid: parseInt(req.params.groupid) } })
     .then((usermessages) => {
       if (usermessages) {
         res.send(usermessages);
       } else {
-        res.send('There are no messages in this group for this user')
+        res.send('There are no messages in this group')
           .catch((err) => {
             res.status(400).send(err);
           });

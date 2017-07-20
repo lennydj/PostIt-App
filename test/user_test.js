@@ -1,4 +1,5 @@
-import app from '../app';
+// import app from '../app';
+const app = require('../app');
 
 const should = require('chai').should(),
 expect = require('chai').expect,
@@ -16,9 +17,9 @@ describe('user', function () {
   });
 
   const testUser = {
-    username: 'Nelson',
-    password: 'chinels',
-    email: 'testme@yahoo.ng',
+    username: 'Chiggy',
+    password: 'chig123',
+    email: 'chig@yahoo.ng',
     phonenumber: '01245622',
   };
 
@@ -26,10 +27,10 @@ describe('user', function () {
 
   describe('User', () => {
     it('should create new user', (done) => {
-      requestHandler.post('/api/users/signup')
+      requestHandler.post('/api/user/signup')
         .set('Accept', 'application/json')
         .send(testUser)
-        .expect(201)
+        .expect(200)
         .end((err, res) => {
           expect(res.body.status).to.equal(testUser.username);
           token = res.body.data.token;
