@@ -13,7 +13,7 @@ const authorize = {
         return next();
       });
     } else {
-      res.status(403).send('Token not provided');
+      res.status(403).send({ message: 'Token not provided' });
     }
   }
 };

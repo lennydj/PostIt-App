@@ -1,26 +1,30 @@
-import models from '../models';
+// import models from '../models';
+const models = require('../models');
 
-const usergroup = models.usergroup;
+const usersgroup = models.usergroup;
 
 module.exports.createUser = (req, res) => {
-  const usersgroup = usergroup;
+  if ((req.body.userid).length === 0) {
+    res.status(400).send({ message: 'Please select the user to be added' });
+  } else {
   // Check if the user exists in the same group
-  usersgroup.findOne({ where: { userid: parseInt(req.body.userid), $and: { groupid: parseInt(req.params.groupid) } } })
-    .then((usergroups) => {
+    usersgroup.findOne({ where: { userid: parseInt(req.body.userid), $and: { groupid: parseInt(req.params.groupid) } } })
+      .then((usergroups) => {
       // If the user does not exist, create the user
-      if (!usergroups) {
-        usersgroup.create({
-          userid: parseInt(req.body.userid),
-          groupid: parseInt(req.params.groupid),
-        })
-          .then(() => res.status(201).send('User has been added to the group'))
-          .catch((err) => {
-            res.status(400).send(err);
-          });
-      } else {
+        if (!usergroups) {
+          usersgroup.create({
+            userid: parseInt(req.body.userid),
+            groupid: parseInt(req.params.groupid),
+          })
+            .then(() => res.status(200).send({ message: 'User has been added to the group' }))
+            .catch((err) => {
+              res.status(400).send(err);
+            });
+        } else {
         // Or prompt that the user is already in the group
-        res.send('User already added to the group. Please reconfirm');
-      }
-    });
+          res.status(400).send({ message: 'User already added to the group. Please reconfirm' });
+        }
+      });
+  }
 };
 

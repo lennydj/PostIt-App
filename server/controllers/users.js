@@ -7,37 +7,39 @@ const users = models.user;
 // const jwt = require('jsonwebtoken');
 
 module.exports.create = (req, res) => {
-  // const newUser = user;
-  users.findOne({ where: { username: req.body.username } })
-    .then((user) => {
+  if ((req.body.username).length === 0 || (req.body.password).length === 0 || (req.body.email).length === 0) {
+    res.status(400).send({ message: 'Please enter a username, password and email' });
+  } else {
+    users.findOne({ where: { $or: [{ username: req.body.username }, { email: req.body.email }] } })
+      .then((user) => {
       // Check if the username exists already
-      if (!user) {
+        if (!user) {
         // Create if it does not exist
-        users.create({
-          username: req.body.username,
-          password: req.body.password,
-          email: req.body.email,
-          phonenumber: req.body.phonenumber,
-        })
-          .then((users) => {
-            const usertoken = jwt.sign({ users: users.id }, 'myownsecret',
-              { expiresIn: 24 * 60 * 60 });
-            res.send(200,
-            //  { token: usertoken, users: users.id, username: users.username });
-              { token: usertoken, username: users.username });
-          });
-      } else {
-        res.send('Username already exists, please choose another username');
-      }
-    })
-  // .then(res.status(201).send(usertoken))
-    .catch(err =>
-      res.status(400).send('Enrollment Failed, Please reconfirm details'));
+          users.create({
+            username: req.body.username,
+            password: req.body.password,
+            email: req.body.email,
+            phonenumber: req.body.phonenumber,
+          })
+            .then((userObj) => {
+              const usertoken = jwt.sign({ user: userObj.id }, 'myownsecret',
+                { expiresIn: 24 * 60 * 60 });
+              res.status(200).send({ token: usertoken, username: userObj.username });
+            //  { token: usertoken, users: users.id, username: users.username });            
+            });
+        } else {
+          res.status(400).send({ message: 'Username or email already exists, please choose another username/email' });
+        }
+      })
+    // .then(res.status(201).send(usertoken))
+      .catch(err =>
+        res.status(400).send({ message: 'Enrollment Failed, Please reconfirm details' }));
+  }
 };
 
 module.exports.signin = (req, res) => {
-  if (req.body.username === null || req.body.password === null) {
-    res.send('Please enter your username and password');
+  if ((req.body.username).length === 0 || (req.body.password).length === 0) {
+    res.status(400).send({ message: 'Please enter your username and password' });
   } else {
     // Find the user
     users.findOne({ where:
@@ -49,11 +51,11 @@ module.exports.signin = (req, res) => {
         // .then((users) => {
           const usertoken = jwt.sign({ users: users.id }, 'myownsecret',
             { expiresIn: 24 * 60 * 60 });
-          res.send(200,
+          res.status(200).send(
             { token: usertoken, users: users.id, username: users.username });
         } else {
         // Fail if the credentials are wrong
-          res.send('Your password/password is incorrect, Please retry with the correct details');
+          res.status(400).send({ message: 'Your username/password is incorrect, Please retry with the correct details' });
         }
       });
   }
