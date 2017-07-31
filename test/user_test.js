@@ -266,7 +266,7 @@ describe('user', () => {
         });
     });
 
-    it('should login user', (done) => {
+    it('should login user to test group feature', (done) => {
       requestHandler.post('/api/user/signin')
         .set('Accept', 'application/json')
         .send({
