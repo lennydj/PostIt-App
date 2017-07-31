@@ -1,7 +1,8 @@
 // import app from '../app';
 const app = require('../app');
 const supertest = require('supertest');
-
+const models = require('../server/models');
+const testdata = require('./seeders/testdata');
 
 const expect = require('chai').expect;
 
@@ -9,46 +10,30 @@ const api = supertest('localhost:8000');
 
 const requestHandler = supertest(app);
 let token;
+
+before((done) => {
+  models.user.bulkCreate(testdata.users)
+    .then(() => { done(); })
+    .catch((err) => { console.log(err, 'error'); });
+});
+
+after((done) => {
+  models.sequelize.sync({ force: true })
+    .then(() => {
+      done();
+    });
+});
+
 describe('user', () => {
-/*  it('should return a 200 response', function (done) {
-    api.get('/api')
-      .set('Accept', 'application/json')
-      .expect(200, done);
-  }); */
-
-  const testUser = {
-    username: 'lenny37',
-    password: 'lenny',
-    email: 'lenny37@yahoo.ng',
-    phonenumber: '01245622',
-  };
-
-  const testGroup = {
-    groupname: 'Homebase16',
-    createdby: 27,
-  };
-
-  const testUserGroup = {
-    userid: 41,
-  };
-
-  const testMessage = {
-    themessage: 'Please note that test is ongoing here',
-    Username: 'Test234',
-    prioritylevel: 'High',
-    senderid: 30,
-  };
-
-
   describe('User', () => {
     it('should create new user', (done) => {
       requestHandler.post('/api/user/signup')
         .set('Accept', 'application/json')
-        .send(testUser)
+        .send(testdata.testUser)
         .end((err, res) => {
           token = res.body.token;
           expect(res.status).to.equal(200);
-          expect(res.body.username).to.equal(testUser.username);
+          expect(res.body.username).to.equal(testdata.testUser.username);
           done();
         });
     });
@@ -56,7 +41,7 @@ describe('user', () => {
     it('should not create same user twice', (done) => {
       requestHandler.post('/api/user/signup')
         .set('Accept', 'application/json')
-        .send(testUser)
+        .send(testdata.testUser)
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.body.message).to.equal('Username or email already exists, please choose another username/email');
@@ -83,8 +68,8 @@ describe('user', () => {
       requestHandler.post('/api/user/signin')
         .set('Accept', 'application/json')
         .send({
-          username: 'lenny31',
-          password: 'lenny',
+          username: 'Helen',
+          password: 'password123',
         })
         .end((err, res) => {
           token = res.body.token;
@@ -97,7 +82,7 @@ describe('user', () => {
       requestHandler.post('/api/user/signin')
         .set('Accept', 'application/json')
         .send({
-          username: 'lenny31',
+          username: 'Helen',
           password: 'test',
         })
         .end((err, res) => {
@@ -125,7 +110,7 @@ describe('user', () => {
       requestHandler.post('/api/group')
         .set('Accept', 'application/json')
         .set('authorization', token)
-        .send(testGroup)
+        .send(testdata.group)
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.body.message).to.equal('Group Created');
@@ -137,7 +122,7 @@ describe('user', () => {
       requestHandler.post('/api/group')
         .set('Accept', 'application/json')
         .set('authorization', token)
-        .send(testGroup)
+        .send(testdata.group)
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.body.message).to.equal('Group already exists, please select another groupname');
@@ -163,7 +148,7 @@ describe('user', () => {
     it('should not create group without token', (done) => {
       requestHandler.post('/api/group')
         .set('Accept', 'application/json')
-        .send(testGroup)
+        .send(testdata.group)
         .end((err, res) => {
           expect(res.status).to.equal(403);
           expect(res.body.message).to.equal('Token not provided');
@@ -172,10 +157,10 @@ describe('user', () => {
     });
 
     it('should add a user to a group', (done) => {
-      requestHandler.post('/api/group/10/user')
+      requestHandler.post('/api/group/1/user')
         .set('Accept', 'application/json')
         .set('authorization', token)
-        .send(testUserGroup)
+        // .send(testdata.usergroup)
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.body.message).to.equal('User has been added to the group');
@@ -184,10 +169,10 @@ describe('user', () => {
     });
 
     it('should not create same user in a group twice', (done) => {
-      requestHandler.post('/api/group/10/user')
+      requestHandler.post('/api/group/1/user')
         .set('Accept', 'application/json')
         .set('authorization', token)
-        .send(testUserGroup)
+        .send(testdata.usergroup)
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.body.message).to.equal('User already added to the group. Please reconfirm');
@@ -195,8 +180,8 @@ describe('user', () => {
         });
     });
 
-    it('should not add empty user details in a group', (done) => {
-      requestHandler.post('/api/group/10/user')
+    /* it('should not add empty user details in a group', (done) => {
+      requestHandler.post('/api/group/1/user')
         .set('Accept', 'application/json')
         .set('authorization', token)
         .send({
@@ -207,12 +192,12 @@ describe('user', () => {
           expect(res.body.message).to.equal('Please select the user to be added');
           done();
         });
-    });
+    }); */
 
     it('should not add a user to a group without token', (done) => {
-      requestHandler.post('/api/group/10/user')
+      requestHandler.post('/api/group/1/user')
         .set('Accept', 'application/json')
-        .send(testUserGroup)
+        .send(testdata.usergroup)
         .end((err, res) => {
           expect(res.status).to.equal(403);
           expect(res.body.message).to.equal('Token not provided');
@@ -221,10 +206,10 @@ describe('user', () => {
     });
 
     it('should post a message to a group he belongs to', (done) => {
-      requestHandler.post('/api/group/10/message')
+      requestHandler.post('/api/group/1/message')
         .set('Accept', 'application/json')
         .set('authorization', token)
-        .send(testMessage)
+        .send(testdata.message)
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.body.message).to.equal('New message posted');
@@ -232,30 +217,15 @@ describe('user', () => {
         });
     });
 
-    it('should not post a message to a group user does not belong to', (done) => {
-      requestHandler.post('/api/group/12/message')
-        .set('Accept', 'application/json')
-        .set('authorization', token)
-        .send({ themessage: 'Please note that test is ongoing here',
-          Username: 'Lennyg',
-          prioritylevel: 'High',
-          senderid: 27, })
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal('Sender does not belong to the Group');
-          done();
-        });
-    });
-
     it('should not add empty message to a group', (done) => {
-      requestHandler.post('/api/group/10/message')
+      requestHandler.post('/api/group/1/message')
         .set('Accept', 'application/json')
         .set('authorization', token)
         .send({
           themessage: '',
           Username: 'Lennyg',
           prioritylevel: 'High',
-          senderid: 27,
+          senderid: 1,
         })
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -265,9 +235,9 @@ describe('user', () => {
     });
 
     it('should not post a message to a group without token', (done) => {
-      requestHandler.post('/api/group/10/message')
+      requestHandler.post('/api/group/1/message')
         .set('Accept', 'application/json')
-        .send(testMessage)
+        .send(testdata.message)
         .end((err, res) => {
           expect(res.status).to.equal(403);
           expect(res.body.message).to.equal('Token not provided');
@@ -276,21 +246,51 @@ describe('user', () => {
     });
 
     it('should show all messages in a group', (done) => {
-      requestHandler.get('/api/group/10/messages')
+      requestHandler.get('/api/group/1/messages')
         .set('Accept', 'application/json')
         .set('authorization', token)
         .end((err, res) => {
           expect(res.status).to.equal(200);
+          expect(res.body).to.be.a('array');
           done();
         });
     });
 
     it('should not show messages in a group without token', (done) => {
-      requestHandler.get('/api/group/10/messages')
+      requestHandler.get('/api/group/1/messages')
         .set('Accept', 'application/json')
         .end((err, res) => {
           expect(res.status).to.equal(403);
           expect(res.body.message).to.equal('Token not provided');
+          done();
+        });
+    });
+
+    it('should login user', (done) => {
+      requestHandler.post('/api/user/signin')
+        .set('Accept', 'application/json')
+        .send({
+          username: 'David',
+          password: 'password234',
+        })
+        .end((err, res) => {
+          token = res.body.token;
+          expect(res.status).to.equal(200);
+          done();
+        });
+    });
+
+    it('should not post a message to a group user does not belong to', (done) => {
+      requestHandler.post('/api/group/1/message')
+        .set('Accept', 'application/json')
+        .set('authorization', token)
+        .send({ themessage: 'Please note that test is ongoing here',
+          Username: 'David',
+          prioritylevel: 'High',
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal('Sender does not belong to the Group');
           done();
         });
     });

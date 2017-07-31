@@ -4,7 +4,7 @@
   "description": "Group Notification App",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "SET NODE_ENV=test && mocha ./test/*.js --require babel-register",
     "start": "nodemon --exec babel-node ./bin/www.js",
     "start-dev": "babel-node server.js"
   },

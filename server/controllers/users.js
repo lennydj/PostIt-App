@@ -7,10 +7,14 @@ const users = models.user;
 // const jwt = require('jsonwebtoken');
 
 module.exports.create = (req, res) => {
-  if ((req.body.username).length === 0 || (req.body.password).length === 0 || (req.body.email).length === 0) {
-    res.status(400).send({ message: 'Please enter a username, password and email' });
+  if ((req.body.username === '' || undefined) ||
+  (req.body.password === '' || undefined) ||
+  (req.body.email === '' || undefined)) {
+    res.status(400).send({
+      message: 'Please enter a username, password and email' });
   } else {
-    users.findOne({ where: { $or: [{ username: req.body.username }, { email: req.body.email }] } })
+    users.findOne({ where: { $or: [{
+      username: req.body.username }, { email: req.body.email }] } })
       .then((user) => {
       // Check if the username exists already
         if (!user) {
@@ -22,13 +26,15 @@ module.exports.create = (req, res) => {
             phonenumber: req.body.phonenumber,
           })
             .then((userObj) => {
-              const usertoken = jwt.sign({ user: userObj.id }, 'myownsecret',
+              const usertoken = jwt.sign({ id: userObj.id }, 'myownsecret',
                 { expiresIn: 24 * 60 * 60 });
-              res.status(200).send({ token: usertoken, username: userObj.username });
-            //  { token: usertoken, users: users.id, username: users.username });            
+              res.status(200).send({
+                token: usertoken, username: userObj.username });
+              // token: usertoken, userid: userObj.id, username: userObj.username });
             });
         } else {
-          res.status(400).send({ message: 'Username or email already exists, please choose another username/email' });
+          res.status(400).send({
+            message: 'Username or email already exists, please choose another username/email' });
         }
       })
     // .then(res.status(201).send(usertoken))
@@ -38,8 +44,10 @@ module.exports.create = (req, res) => {
 };
 
 module.exports.signin = (req, res) => {
-  if ((req.body.username).length === 0 || (req.body.password).length === 0) {
-    res.status(400).send({ message: 'Please enter your username and password' });
+  if ((req.body.username === '' || undefined) ||
+  (req.body.password === '' || undefined)) {
+    res.status(400).send({
+      message: 'Please enter your username and password' });
   } else {
     // Find the user
     users.findOne({ where:
@@ -47,15 +55,14 @@ module.exports.signin = (req, res) => {
       .then((user) => {
         if (user) {
         // Allow Login if the credentials are correct
-        // res.send('Login Successful! You have 5 pending notifications');
-        // .then((users) => {
-          const usertoken = jwt.sign({ users: users.id }, 'myownsecret',
+          const usertoken = jwt.sign({ id: user.id }, 'myownsecret',
             { expiresIn: 24 * 60 * 60 });
           res.status(200).send(
-            { token: usertoken, users: users.id, username: users.username });
+            { token: usertoken, id: users.id, username: users.username });
         } else {
         // Fail if the credentials are wrong
-          res.status(400).send({ message: 'Your username/password is incorrect, Please retry with the correct details' });
+          res.status(400).send({
+            message: 'Your username/password is incorrect, Please retry with the correct details' });
         }
       });
   }

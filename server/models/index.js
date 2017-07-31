@@ -10,25 +10,9 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(`${__dirname}/../config/config.json`)[env];
 const db = {};
 
-/*let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable]);
-} else {
-  sequelize = new Sequelize(
-    process.env.DATABASE_URL,
-    { dialect: 'postgress' }
-  );
-} */
-
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env.DATABASE_URL, [config.use_env_variable]);
-    /*{ dialect: 'postgress',
-      dialectOptions: {
-        ssl: true,
-        native: true
-      } }
-  );*/ 
 } else {
   sequelize = new Sequelize(
     config.database, config.username, config.password, config
